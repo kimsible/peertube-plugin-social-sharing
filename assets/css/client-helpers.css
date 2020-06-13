@@ -1,0 +1,71 @@
+ngb-modal-window .video-sharing {
+  opacity: 0;
+  height: 0;
+}
+
+ngb-modal-window .video-sharing.fade {
+  height: max-content;
+  opacity: 1;
+  animation: fade 0.4s;
+}
+
+@keyframes fade {
+  0% {
+    animation-timing-function: ease-in-out;
+  }
+
+  100% {
+    height: max-content;
+    opacity: 1;
+    animation-timing-function: ease-in-out;
+  }
+}
+
+ngb-modal-window .playlist {
+  display: flex;
+  flex-direction: column;
+}
+
+ngb-modal-window .video-sharing {
+  margin-bottom: 10px;
+  border: none;
+  height: max-content;
+  min-width: 50%;
+  line-height: 30px;
+  border-radius: 3px;
+  text-align: center;
+  padding: 0 13px;
+  cursor: pointer;
+  background-color: #e5e5e5;
+  color: #585858;
+  background-size: auto auto;
+  font-weight: bold;
+  align-self: center;
+}
+
+@media only screen and (min-width: 500px) {
+  ngb-modal-window .video-sharing {
+    min-width: 40%;
+  }
+}
+
+ngb-modal-window .video-sharing:hover,
+ngb-modal-window .video-sharing:active,
+ngb-modal-window .video-sharing:focus {
+  text-decoration: none !important;
+  outline: none !important;
+}
+
+ngb-modal-window .video-sharing span {
+  width: 21px;
+}
+
+ngb-modal-window .video-sharing span:first-child {
+  margin-right: 5px;
+}
+
+ngb-modal-window .video-sharing span svg {
+  position: relative;
+  margin-right: 0;
+  top: -2px;
+}
