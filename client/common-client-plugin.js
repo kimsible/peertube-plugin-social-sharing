@@ -75,6 +75,12 @@ async function displayButtons (type) {
   const inputReadOnlyCopy = await waitForRendering(`ngb-modal-window .${type} my-input-readonly-copy`)
   const nativeInput = inputReadOnlyCopy.querySelector('input')
 
+  // If buttons already injected remove them
+  const buttons = inputReadOnlyCopy.parentElement.querySelectorAll('.video-sharing')
+  buttons.forEach(button => {
+    button.remove()
+  })
+
   const facebookButton = createButton({
     name: 'Facebook',
     inputRef: nativeInput,
