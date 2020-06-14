@@ -4,20 +4,21 @@ ngb-modal-window .video-sharing {
 }
 
 ngb-modal-window .video-sharing.fade {
-  height: max-content;
-  opacity: 1;
   animation: fade 0.4s;
+  animation-timing-function: ease-in-out;
 }
 
 @keyframes fade {
-  0% {
-    animation-timing-function: ease-in-out;
+  from {
+    transform: translateY(-100%);
+    opacity: 0;
+    height: 0;
   }
 
-  100% {
-    height: max-content;
+  to {
+    transform: translateY(0);
     opacity: 1;
-    animation-timing-function: ease-in-out;
+    height: max-content;
   }
 }
 
