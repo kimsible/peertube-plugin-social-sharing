@@ -12,7 +12,9 @@ async function register ({ registerHook }) {
 
           share.addEventListener('click', async () => {
             try {
-              await displayButtons('playlist')
+              if (/playlist/.test(path)) {
+                await displayButtons('playlist')
+              }
               await createTabObserver()
             } catch (error) {
               console.error(error)
