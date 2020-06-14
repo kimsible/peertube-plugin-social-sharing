@@ -84,7 +84,7 @@ async function displayButtons (type) {
   const facebookButton = createButton({
     name: 'Facebook',
     inputRef: nativeInput,
-    sharerLink: 'https://www.facebook.com/sharer/sharer.php?u=',
+    sharerLink: 'https://www.facebook.com/sharer/sharer.php?display=page&u=',
     iconHTML: facebookIcon
   })
 
