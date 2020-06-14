@@ -1,8 +1,3 @@
-ngb-modal-window .video-sharing {
-  opacity: 0;
-  height: 0;
-}
-
 ngb-modal-window .video-sharing.fade {
   animation: fade 0.4s;
   animation-timing-function: ease-in-out;
