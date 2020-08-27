@@ -6,80 +6,62 @@ async function register ({ registerHook }) {
     target: 'action:router.navigation-end',
     handler: async ({ path }) => {
       if (/^\/videos\/watch/.test(path)) {
-        try {
-          // Get Share button div element
-          const share = await waitForRendering('my-video-watch .video-actions .action-button:nth-child(3)')
+        onModalOpen(() => {
+          createTabObserver({ video: true, playlist: /playlist/.test(path) })
+        })
+      }
 
-          share.addEventListener('click', async () => {
-            try {
-              if (/playlist/.test(path)) {
-                await displayButtons('playlist')
-              }
-              await createTabObserver()
-            } catch (error) {
-              console.error(error)
-            }
-          })
-        } catch (error) {
-          console.error(error)
-        }
+      if (/^\/my-account\/video-playlists/.test(path)) {
+        onModalOpen(() => {
+          createTabObserver({ playlist: true })
+        })
       }
     }
   })
-}
-
-async function waitForRendering (selector) {
-   // Waiting for DOMContent updated with a timeout of 5 seconds
-   await new Promise((resolve, reject) => {
-     const timeout = setTimeout(() => {
-       clearInterval(interval)
-       reject(new Error('No element found'))
-     }, 5000)
-
-     // Waiting for component in DOM
-     const interval = setInterval(() => {
-       if (document.querySelector(selector) !== null) {
-         clearTimeout(timeout)
-         clearInterval(interval)
-         resolve()
-       }
-     }, 10)
-   })
-
-  return document.querySelector(selector)
 }
 
 function createButton ({ name, sharerLink, inputRef, iconHTML }) {
   const icon = document.createElement('span')
   icon.innerHTML = iconHTML
 
-  const text = document.createElement('span')
-  text.innerText = `Share on ${name}`
-
   const button = document.createElement('a')
   button.target = '_blank'
-  button.classList.add('video-sharing', 'fade')
+  button.tabIndex = 0
+  button.title = `Share on ${name}`
+  button.classList.add('video-sharing')
   button.appendChild(icon)
-  button.appendChild(text)
-  button.addEventListener('click', () => {
+
+  const getLink = () => {
     inputRef.dispatchEvent(new Event('click'))
 
     const videoLink = inputRef.value
     button.href = sharerLink + videoLink
-  })
+  }
+
+  getLink()
+
+  inputRef.addEventListener('blur', getLink)
+  button.addEventListener('mouseover', getLink)
+  button.addEventListener('mousedown', getLink)
+  button.addEventListener('touchstart', getLink)
+  button.addEventListener('focus', getLink)
 
   return button
 }
 
-async function displayButtons (type) {
-  const inputReadOnlyCopy = await waitForRendering(`ngb-modal-window .${type} my-input-readonly-copy`)
+function displayButtons (type) {
+  const inputReadOnlyCopy = document.querySelector(`ngb-modal-window .${type} my-input-readonly-copy`)
   const nativeInput = inputReadOnlyCopy.querySelector('input')
 
   // If buttons already injected remove them
-  const buttons = inputReadOnlyCopy.parentElement.querySelectorAll('.video-sharing')
-  buttons.forEach(button => {
-    button.remove()
+  const buttonsContainers = inputReadOnlyCopy.parentElement.querySelectorAll('.video-sharing-container')
+  buttonsContainers.forEach(buttonsContainer => {
+    buttonsContainer.remove()
   })
+
+  const container = document.createElement('div')
+  container.classList.add('video-sharing-container')
+
 
   const facebookButton = createButton({
     name: 'Facebook',
@@ -95,47 +77,67 @@ async function displayButtons (type) {
     iconHTML: twitterIcon
   })
 
-  inputReadOnlyCopy.parentElement.insertBefore(facebookButton, inputReadOnlyCopy)
-  inputReadOnlyCopy.parentElement.insertBefore(twitterButton, inputReadOnlyCopy)
+  container.appendChild(facebookButton)
+  container.appendChild(twitterButton)
+
+  inputReadOnlyCopy.parentElement.insertBefore(container, inputReadOnlyCopy)
 }
 
-async function createTabObserver () {
-  const runAction = async target => {
-    try {
-      const selected = target.getAttribute('aria-selected')
+function onModalOpen (callback) {
+  const observer = new MutationObserver(mutations => {
+    for (const mutation of mutations) {
+      const { type, addedNodes } = mutation
 
-      if (selected) {
-        await displayButtons('video')
+      if (type === 'childList') {
+        addedNodes.forEach(addedNode => {
+          if (addedNode.localName === 'ngb-modal-window') {
+            if (document.querySelector('ngb-modal-window .video') || document.querySelector('ngb-modal-window .playlist')) {
+              callback()
+            }
+          }
+        })
       }
+    }
+  })
 
-    } catch (error) {
-      console.error(error)
+  observer.observe(document.body, {
+    childList: true
+  })
+}
+
+function createTabObserver ({ video, playlist }) {
+  const runAction = target => {
+    const selected = target.getAttribute('aria-selected')
+
+    if (selected) {
+      if (video) displayButtons('video')
+      if (playlist) displayButtons('playlist')
     }
   }
 
+  const observeTab = async type => {
+    const observer = new MutationObserver(mutations => {
+      for (const mutation of mutations) {
+        const { type, attributeName, target } = mutation
 
-  const nav = await waitForRendering('ngb-modal-window .video .nav')
-  const tab = nav.querySelectorAll('.nav-link')[0]
-
-  await runAction(tab)
-
-  const observer = new MutationObserver(async mutations => {
-    for (const mutation of mutations) {
-      const {
-        type,
-        attributeName,
-        target
-      } = mutation
-
-      if ((type === 'attributes') && (attributeName === 'aria-selected') && (target.getAttribute('aria-selected') === 'true')) {
-        await runAction(target)
+        if ((type === 'attributes') && (attributeName === 'aria-selected') && (target.getAttribute('aria-selected') === 'true')) {
+          runAction(target)
+        }
       }
-    }
-  })
+    })
 
-  observer.observe(tab, {
-    attributes: true
-  })
+    const nav = document.querySelector(`ngb-modal-window .${type} .nav`)
+    const tab = nav.querySelectorAll('.nav-link')[0]
+
+    runAction(tab)
+
+    observer.observe(tab, {
+      attributes: true
+    })
+  }
+
+  if (video) observeTab('video')
+  if (playlist) observeTab('playlist')
 }
 
 export {
