@@ -20,7 +20,7 @@ async function register ({ registerHook }) {
   })
 }
 
-function createButton ({ name, sharerLink, inputRef, iconHTML }) {
+function createButton({ name, sharerLink, inputRef, iconHTML, filters }) {
   const icon = document.createElement('span')
   icon.innerHTML = iconHTML
 
@@ -32,26 +32,25 @@ function createButton ({ name, sharerLink, inputRef, iconHTML }) {
   button.appendChild(icon)
 
   const getLink = () => {
-    inputRef.dispatchEvent(new Event('click'))
-
     const videoLink = inputRef.value
     button.href = sharerLink + videoLink
   }
 
   getLink()
 
-  inputRef.addEventListener('blur', getLink)
-  button.addEventListener('mouseover', getLink)
-  button.addEventListener('mousedown', getLink)
-  button.addEventListener('touchstart', getLink)
-  button.addEventListener('focus', getLink)
+  filters.forEach(filter => {
+    filter.addEventListener('change', getLink)
+    filter.addEventListener('input', getLink)
+  })
 
   return button
 }
 
-function displayButtons (type) {
-  const inputReadOnlyCopy = document.querySelector(`ngb-modal-window .${type} my-input-readonly-copy`)
+function displayButtons(type) {
+  const modalContainer = document.querySelector(`ngb-modal-window .${type}`)
+  const inputReadOnlyCopy = modalContainer.querySelector('my-input-readonly-copy')
   const nativeInput = inputReadOnlyCopy.querySelector('input')
+  const filters = modalContainer.querySelectorAll('my-peertube-checkbox input, my-timestamp-input input')
 
   // If buttons already injected remove them
   const buttonsContainers = inputReadOnlyCopy.parentElement.querySelectorAll('.video-sharing-container')
@@ -67,14 +66,16 @@ function displayButtons (type) {
     name: 'Facebook',
     inputRef: nativeInput,
     sharerLink: 'https://www.facebook.com/sharer/sharer.php?display=page&u=',
-    iconHTML: facebookIcon
+    iconHTML: facebookIcon,
+    filters
   })
 
   const twitterButton = createButton({
     name: 'Twitter',
     inputRef: nativeInput,
     sharerLink: 'https://twitter.com/intent/tweet?url=',
-    iconHTML: twitterIcon
+    iconHTML: twitterIcon,
+    filters
   })
 
   container.appendChild(facebookButton)
