@@ -28,7 +28,7 @@ function createButton({ name, sharerLink, inputRef, iconHTML, filters }) {
   button.target = '_blank'
   button.tabIndex = 0
   button.title = `Share on ${name}`
-  button.classList.add('video-sharing')
+  button.classList.add('video-sharing', name.toLowerCase())
   button.appendChild(icon)
 
   const getLink = () => {

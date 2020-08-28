@@ -8,14 +8,8 @@ ngb-modal-window .video-sharing-container {
 }
 
 ngb-modal-window .video-sharing {
-  margin-right: 5px;
-  border: none;
-  height: max-content;
-  border-radius: 50%;
-  padding: 10px;
+  margin-right: 10px;
   cursor: pointer;
-  background-color: #e5e5e5;
-  background-size: auto auto;
 }
 
 ngb-modal-window .video-sharing:last-child {
@@ -28,21 +22,26 @@ ngb-modal-window .video-sharing:focus,
 ngb-modal-window .video-sharing:focus-within {
   text-decoration: none !important;
   outline: none !important;
-  opacity: 1;
 }
 
 ngb-modal-window .video-sharing span svg {
-  width: 24px;
-  height: 24px;
-  fill: var(--ForegroundColor);
+  width: 40px;
+  height: 40px;
+  fill: var(--greyForegroundColor);
   stroke: transparent;
-  opacity: 0.5;
-  transition: opacity 0.15s ease-in-out;
+  transition: fill 0.2s ease-in;
 }
 
-ngb-modal-window .video-sharing:hover span svg,
-ngb-modal-window .video-sharing:active span svg,
-ngb-modal-window .video-sharing:focus span svg,
-ngb-modal-window .video-sharing:focus-within span svg {
-  opacity: 1;
+ngb-modal-window .video-sharing.facebook:hover span svg,
+ngb-modal-window .video-sharing.facebook:active span svg,
+ngb-modal-window .video-sharing.facebook:focus span svg,
+ngb-modal-window .video-sharing.facebook:focus-within span svg {
+  fill: #1877F2;
+}
+
+ngb-modal-window .video-sharing.twitter:hover span svg,
+ngb-modal-window .video-sharing.twitter:active span svg,
+ngb-modal-window .video-sharing.twitter:focus span svg,
+ngb-modal-window .video-sharing.twitter:focus-within span svg {
+  fill: #1DA1F2;
 }
