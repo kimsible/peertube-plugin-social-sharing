@@ -48,12 +48,13 @@ function createButton({ name, sharerLink, inputRef, iconHTML, filters }) {
 
 function displayButtons(type) {
   const modalContainer = document.querySelector(`ngb-modal-window .${type}`)
-  const inputReadOnlyCopy = modalContainer.querySelector('my-input-readonly-copy')
-  const nativeInput = inputReadOnlyCopy.querySelector('input')
+  // my-input-readonly-copy is for backward compatibility
+  const inputToggleHidenElem = modalContainer.querySelector('my-input-toggle-hidden') || modalContainer.querySelector('my-input-readonly-copy')
+  const nativeInput = inputToggleHidenElem.querySelector('input')
   const filters = modalContainer.querySelectorAll('my-peertube-checkbox input, my-timestamp-input input')
 
   // If buttons already injected remove them
-  const buttonsContainers = inputReadOnlyCopy.parentElement.querySelectorAll('.video-sharing-container')
+  const buttonsContainers = inputToggleHidenElem.parentElement.querySelectorAll('.video-sharing-container')
   buttonsContainers.forEach(buttonsContainer => {
     buttonsContainer.remove()
   })
@@ -81,7 +82,7 @@ function displayButtons(type) {
   container.appendChild(facebookButton)
   container.appendChild(twitterButton)
 
-  inputReadOnlyCopy.parentElement.insertBefore(container, inputReadOnlyCopy)
+  inputToggleHidenElem.parentElement.insertBefore(container, inputToggleHidenElem)
 }
 
 function onModalOpen (callback) {
