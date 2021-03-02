@@ -16,15 +16,12 @@ ngb-modal-window .video-sharing:last-child {
   margin-right: 0;
 }
 
-ngb-modal-window .video-sharing:hover,
-ngb-modal-window .video-sharing:active,
-ngb-modal-window .video-sharing:focus,
-ngb-modal-window .video-sharing:focus-within {
+ngb-modal-window .video-sharing {
   text-decoration: none !important;
   outline: none !important;
 }
 
-ngb-modal-window .video-sharing span svg {
+ngb-modal-window .video-sharing svg {
   width: 40px;
   height: 40px;
   fill: var(--greyForegroundColor);
@@ -32,16 +29,10 @@ ngb-modal-window .video-sharing span svg {
   transition: fill 0.2s ease-in;
 }
 
-ngb-modal-window .video-sharing.facebook:hover span svg,
-ngb-modal-window .video-sharing.facebook:active span svg,
-ngb-modal-window .video-sharing.facebook:focus span svg,
-ngb-modal-window .video-sharing.facebook:focus-within span svg {
+ngb-modal-window .video-sharing.facebook svg {
   fill: #1877F2;
 }
 
-ngb-modal-window .video-sharing.twitter:hover span svg,
-ngb-modal-window .video-sharing.twitter:active span svg,
-ngb-modal-window .video-sharing.twitter:focus span svg,
-ngb-modal-window .video-sharing.twitter:focus-within span svg {
+ngb-modal-window .video-sharing.twitter svg {
   fill: #1DA1F2;
 }
