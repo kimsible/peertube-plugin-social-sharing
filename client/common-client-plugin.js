@@ -21,7 +21,7 @@ async function register ({ registerHook }) {
 }
 
 function createButton({ name, sharerLink, inputRef, iconHTML, filters }) {
-  const icon = document.createElement('span')
+  const icon = document.createElement('div')
   icon.innerHTML = iconHTML
 
   const button = document.createElement('a')
@@ -30,6 +30,7 @@ function createButton({ name, sharerLink, inputRef, iconHTML, filters }) {
   button.title = `Share on ${name}`
   button.classList.add('video-sharing', name.toLowerCase())
   button.appendChild(icon)
+  button.innerHTML += name
 
   const getLink = () => {
     const videoLink = inputRef.value

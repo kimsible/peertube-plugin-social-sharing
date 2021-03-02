@@ -10,15 +10,14 @@ ngb-modal-window .video-sharing-container {
 ngb-modal-window .video-sharing {
   margin-right: 10px;
   cursor: pointer;
+  display: inline-block;
+  text-decoration: none !important;
+  outline: none !important;
+  color: #000;
 }
 
 ngb-modal-window .video-sharing:last-child {
   margin-right: 0;
-}
-
-ngb-modal-window .video-sharing {
-  text-decoration: none !important;
-  outline: none !important;
 }
 
 ngb-modal-window .video-sharing svg {
@@ -26,7 +25,7 @@ ngb-modal-window .video-sharing svg {
   height: 40px;
   fill: var(--greyForegroundColor);
   stroke: transparent;
-  transition: fill 0.2s ease-in;
+  margin-bottom: 5px;
 }
 
 ngb-modal-window .video-sharing.facebook svg {
