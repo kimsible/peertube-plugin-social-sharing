@@ -24,14 +24,15 @@ async function register ({ registerHook, peertubeHelpers }) {
   })
 }
 
-function createButton({ name, sharerLink, inputRef, iconHTML, filters }) {
+async function createButton({ name, sharerLink, inputRef, iconHTML, filters }) {
   const icon = document.createElement('div')
   icon.innerHTML = iconHTML
 
   const button = document.createElement('a')
   button.target = '_blank'
   button.tabIndex = 0
-  button.title = `Share on ${name}`
+  const label = await translate('Share on')
+  button.title = `${label} ${name}`
   button.classList.add('video-sharing', name.toLowerCase())
   button.appendChild(icon)
   button.innerHTML += name
@@ -68,7 +69,7 @@ async function displayButtons(type) {
   container.classList.add('video-sharing-container')
 
 
-  const facebookButton = createButton({
+  const facebookButton = await createButton({
     name: 'Facebook',
     inputRef: nativeInput,
     sharerLink: 'https://www.facebook.com/sharer/sharer.php?display=page&u=',
@@ -76,7 +77,7 @@ async function displayButtons(type) {
     filters
   })
 
-  const twitterButton = createButton({
+  const twitterButton = await createButton({
     name: 'Twitter',
     inputRef: nativeInput,
     sharerLink: 'https://twitter.com/intent/tweet?url=',
