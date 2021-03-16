@@ -38,7 +38,9 @@
     "build": "webpack --env prod"
   },
   "staticDirs": {},
-  "translations": {},
+  "translations": {
+    "sv-SE": "./languages/sv.json"
+  },
   "dependencies": {},
   "husky": {
     "hooks": {

@@ -35,3 +35,7 @@ ngb-modal-window .video-sharing.facebook svg {
 ngb-modal-window .video-sharing.twitter svg {
   fill: #1DA1F2;
 }
+
+ngb-modal-window label.share-link {
+  align-self: start;
+}
