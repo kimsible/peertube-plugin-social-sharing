@@ -42,7 +42,7 @@ async function createButton({ name, sharerLink, inputRef, iconHTML, filters }) {
 
   const getLink = () => {
     const videoLink = inputRef.value
-    button.href = sharerLink + videoLink
+    button.href = sharerLink + encodeURIComponent(videoLink + `?utm_source=${name.toLowerCase()}&utm_medium=social&utm_campaign=video%20share`)
   }
 
   getLink()
