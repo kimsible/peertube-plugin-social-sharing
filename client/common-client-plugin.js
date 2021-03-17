@@ -1,6 +1,7 @@
 import twitterIcon from '../assets/images/twitter.svg'
 import facebookIcon from '../assets/images/facebook.svg'
 import gabIcon from '../assets/images/gab.svg'
+import linkedinIcon from '../assets/images/linkedin.svg'
 
 let translate
 
@@ -94,9 +95,18 @@ async function displayButtons(type) {
     filters
   })
 
+  const linkedinButton = await createButton({
+    name: 'LinkedIn',
+    inputRef: nativeInput,
+    sharerLink: 'https://www.linkedin.com/shareArticle?mini=true&url=',
+    iconHTML: linkedinIcon,
+    filters
+  })
+
   container.appendChild(facebookButton)
   container.appendChild(twitterButton)
   container.appendChild(gabButton)
+  container.appendChild(linkedinButton)
 
   inputToggleHidenElem.parentElement.insertBefore(container, inputToggleHidenElem)
 }

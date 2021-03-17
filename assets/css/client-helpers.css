@@ -36,6 +36,10 @@ ngb-modal-window .video-sharing.twitter svg {
   fill: #1DA1F2;
 }
 
+ngb-modal-window .video-sharing.linkedin svg {
+  fill: #0077b5;
+}
+
 ngb-modal-window label.share-link {
   align-self: start;
 }
