@@ -1,5 +1,6 @@
 import twitterIcon from '../assets/images/twitter.svg'
 import facebookIcon from '../assets/images/facebook.svg'
+import gabIcon from '../assets/images/gab.svg'
 
 let translate
 
@@ -77,6 +78,14 @@ async function displayButtons(type) {
     filters
   })
 
+  const gabButton = await createButton({
+    name: 'Gab',
+    inputRef: nativeInput,
+    sharerLink: 'https://gab.com/compose?url=',
+    iconHTML: gabIcon,
+    filters
+  })
+
   const twitterButton = await createButton({
     name: 'Twitter',
     inputRef: nativeInput,
@@ -87,6 +96,7 @@ async function displayButtons(type) {
 
   container.appendChild(facebookButton)
   container.appendChild(twitterButton)
+  container.appendChild(gabButton)
 
   inputToggleHidenElem.parentElement.insertBefore(container, inputToggleHidenElem)
 }
