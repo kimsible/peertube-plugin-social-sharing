@@ -68,6 +68,8 @@ async function displayButtons(type) {
     buttonsContainer.remove()
   })
 
+  const videoTitle = document.querySelector('h1.video-info-name').innerText
+
   const container = document.createElement('div')
   container.classList.add('video-sharing-container')
 
@@ -83,7 +85,7 @@ async function displayButtons(type) {
   const gabButton = await createButton({
     name: 'Gab',
     inputRef: nativeInput,
-    sharerLink: 'https://gab.com/compose?url=',
+    sharerLink: `https://gab.com/compose?text=${videoTitle}&url=`,
     iconHTML: gabIcon,
     filters
   })
@@ -91,7 +93,7 @@ async function displayButtons(type) {
   const twitterButton = await createButton({
     name: 'Twitter',
     inputRef: nativeInput,
-    sharerLink: 'https://twitter.com/intent/tweet?url=',
+    sharerLink: `https://twitter.com/intent/tweet?text=${videoTitle}&url=`,
     iconHTML: twitterIcon,
     filters
   })
@@ -99,7 +101,7 @@ async function displayButtons(type) {
   const linkedinButton = await createButton({
     name: 'LinkedIn',
     inputRef: nativeInput,
-    sharerLink: 'https://www.linkedin.com/shareArticle?mini=true&url=',
+    sharerLink: `https://www.linkedin.com/shareArticle?mini=true&title=${videoTitle}&url=`,
     iconHTML: linkedinIcon,
     filters
   })
