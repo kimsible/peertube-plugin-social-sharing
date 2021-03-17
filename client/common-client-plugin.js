@@ -2,6 +2,7 @@ import twitterIcon from '../assets/images/twitter.svg'
 import facebookIcon from '../assets/images/facebook.svg'
 import gabIcon from '../assets/images/gab.svg'
 import linkedinIcon from '../assets/images/linkedin.svg'
+import meweIcon from '../assets/images/mewe.svg'
 
 let translate
 
@@ -103,10 +104,19 @@ async function displayButtons(type) {
     filters
   })
 
+  const meweButton = await createButton({
+    name: 'MeWe',
+    inputRef: nativeInput,
+    sharerLink: 'https://mewe.com/share?link=',
+    iconHTML: meweIcon,
+    filters
+  })
+
   container.appendChild(facebookButton)
   container.appendChild(twitterButton)
   container.appendChild(gabButton)
   container.appendChild(linkedinButton)
+  container.appendChild(meweButton)
 
   inputToggleHidenElem.parentElement.insertBefore(container, inputToggleHidenElem)
 }
