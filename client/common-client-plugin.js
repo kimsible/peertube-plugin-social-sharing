@@ -8,18 +8,21 @@ let translate
 
 async function register ({ registerHook, peertubeHelpers }) {
   translate = peertubeHelpers.translate
+  let onModalOpenObserver
 
   registerHook({
     target: 'action:router.navigation-end',
     handler: async ({ path }) => {
-      if (/^\/videos\/watch/.test(path)) {
-        onModalOpen(() => {
-          createTabObserver({ video: true, playlist: /playlist/.test(path) })
-        })
+      if (onModalOpenObserver) {
+        onModalOpenObserver.disconnect()
       }
 
-      if (/^\/my-account\/video-playlists/.test(path)) {
-        onModalOpen(() => {
+      if (/^\/videos\/watch/.test(path)) {
+        onModalOpenObserver = onModalOpen(() => {
+          createTabObserver({ video: true, playlist: /playlist/.test(path) })
+        })
+      } else if (/^\/my-account\/video-playlists/.test(path)) {
+        onModalOpenObserver = onModalOpen(() => {
           createTabObserver({ playlist: true })
         })
       }
@@ -143,6 +146,8 @@ function onModalOpen (callback) {
   observer.observe(document.body, {
     childList: true
   })
+
+  return observer
 }
 
 function createTabObserver ({ video, playlist }) {
