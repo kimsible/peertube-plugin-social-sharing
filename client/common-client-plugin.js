@@ -17,11 +17,11 @@ async function register ({ registerHook, peertubeHelpers }) {
         onModalOpenObserver.disconnect()
       }
 
-      if (/^\/videos\/watch/.test(path)) {
+      if (/^\/videos\/watch|^\/w\//.test(path)) {
         onModalOpenObserver = onModalOpen(() => {
           createTabObserver({ video: true, playlist: /playlist/.test(path) })
         })
-      } else if (/^\/my-account\/video-playlists/.test(path)) {
+      } else if (/^\/my-(account|library)\/video-playlists/.test(path)) {
         onModalOpenObserver = onModalOpen(() => {
           createTabObserver({ playlist: true })
         })
