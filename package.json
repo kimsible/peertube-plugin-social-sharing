@@ -50,7 +50,8 @@
   },
   "standard": {
     "globals": [
-      "Event"
+      "Event",
+      "MutationObserver"
     ]
   }
 }
