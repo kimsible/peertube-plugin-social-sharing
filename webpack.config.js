@@ -2,8 +2,6 @@ const path = require('path')
 const fs = require('fs')
 const dotenv = require('dotenv')
 
-const EsmWebpackPlugin = require('@purtuga/esm-webpack-plugin')
-
 module.exports = async env => {
   let mode, output, watch
 
@@ -39,19 +37,20 @@ module.exports = async env => {
       ...output,
       filename: 'dist/common-client-plugin.js',
       chunkFilename: 'dist/[name].js',
-      library: 'script',
-      libraryTarget: 'var'
+      library: {
+        type: 'module'
+      }
     },
     module: {
       rules: [
         {
           test: /\.svg$/,
-          loader: 'svg-inline-loader'
+          type: 'asset/source'
         }
       ]
     },
-    plugins: [
-      new EsmWebpackPlugin()
-    ]
+    experiments: {
+      outputModule: true
+    }
   }
 }
