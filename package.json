@@ -17,14 +17,14 @@
     "assets/css/client-helpers.css"
   ],
   "devDependencies": {
-    "@purtuga/esm-webpack-plugin": "^1.2.1",
-    "dotenv": "^8.2.0",
-    "husky": "^4.2.5",
-    "lint-staged": "^10.2.10",
-    "standard": "^14.3.4",
+    "@purtuga/esm-webpack-plugin": "^1.5.0",
+    "dotenv": "^10.0.0",
+    "husky": "^4.3.8",
+    "lint-staged": "^11.1.2",
+    "standard": "^16.0.3",
     "svg-inline-loader": "^0.8.2",
-    "webpack": "^4.43.0",
-    "webpack-cli": "^3.3.11"
+    "webpack": "^4.46.0",
+    "webpack-cli": "^4.8.0"
   },
   "engine": {
     "peertube": ">=2.2.0"
@@ -36,9 +36,8 @@
   ],
   "library": "./main.js",
   "scripts": {
-    "dev": "webpack --env.dev",
-    "prepare": "npm run build",
-    "build": "webpack --env.prod"
+    "dev": "webpack --env dev",
+    "build": "webpack --env prod"
   },
   "staticDirs": {},
   "translations": {},
