@@ -19,7 +19,7 @@ async function register ({ registerHook, peertubeHelpers }) {
 
       if (/^\/videos\/watch|^\/w\//.test(path)) {
         onModalOpenObserver = onModalOpen(() => {
-          createTabObserver({ video: true, playlist: /playlist/.test(path) })
+          createTabObserver({ video: true, playlist: /^\/videos\/watch|^\/w\/p\//.test(path) })
         })
       } else if (/^\/my-(account|library)\/video-playlists/.test(path)) {
         onModalOpenObserver = onModalOpen(() => {
@@ -30,7 +30,7 @@ async function register ({ registerHook, peertubeHelpers }) {
   })
 }
 
-async function createButton({ name, sharerLink, inputRef, iconHTML, filters }) {
+async function createButton ({ name, sharerLink, inputRef, iconHTML, filters }) {
   const icon = document.createElement('div')
   icon.innerHTML = iconHTML
 
@@ -58,7 +58,7 @@ async function createButton({ name, sharerLink, inputRef, iconHTML, filters }) {
   return button
 }
 
-async function displayButtons(type) {
+async function displayButtons (type) {
   const modalContainer = document.querySelector(`ngb-modal-window .${type}`)
   // my-input-readonly-copy is for backward compatibility
   const inputToggleHidenElem = modalContainer.querySelector('my-input-toggle-hidden') || modalContainer.querySelector('my-input-readonly-copy')
@@ -75,7 +75,6 @@ async function displayButtons(type) {
 
   const container = document.createElement('div')
   container.classList.add('video-sharing-container')
-
 
   const facebookButton = await createButton({
     name: 'Facebook',
