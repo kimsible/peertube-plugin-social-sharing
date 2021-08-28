@@ -4,12 +4,15 @@ import gabIcon from '../assets/images/gab.svg'
 import linkedinIcon from '../assets/images/linkedin.svg'
 import meweIcon from '../assets/images/mewe.svg'
 
+export { register }
+
 let translate
 
 async function register ({ registerHook, peertubeHelpers }) {
+  // Expose required PeerTube Helpers
   translate = peertubeHelpers.translate
-  let onModalOpenObserver
 
+  let onModalOpenObserver
   registerHook({
     target: 'action:router.navigation-end',
     handler: async ({ path }) => {
@@ -205,8 +208,4 @@ function createTabObserver ({ video, playlist }) {
 
   if (video) observeTab('video')
   if (playlist) observeTab('playlist')
-}
-
-export {
-  register
 }
