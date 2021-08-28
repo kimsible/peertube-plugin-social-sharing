@@ -1,0 +1,22 @@
+[
+  {
+    "label": "Facebook",
+    "sharerLink": "https://facebook.com/sharer/sharer.php?display=page&u=%link"
+  },
+  {
+    "label": "Twitter",
+    "sharerLink": "https://twitter.com/intent/tweet?text=%body&url=%link"
+  },
+  {
+    "label": "LinkedIn",
+    "sharerLink": "https://linkedin.com/shareArticle?mini=true&title=%body&url=%link"
+  },
+  {
+    "label": "Gab",
+    "sharerLink": "https://gab.com/compose?text=%body&url=%link"
+  },
+  {
+    "label": "MeWe",
+    "sharerLink": "https://mewe.com/share?link=%link"
+  }
+]

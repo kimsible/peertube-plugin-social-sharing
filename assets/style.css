@@ -5,10 +5,13 @@ ngb-modal-window .playlist {
 
 ngb-modal-window .video-sharing-container {
   margin-bottom: 25px;
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  width: 100%;
 }
 
 ngb-modal-window .video-sharing {
-  margin-right: 10px;
   cursor: pointer;
   display: inline-flex;
   text-decoration: none !important;
@@ -16,6 +19,9 @@ ngb-modal-window .video-sharing {
   color: #000;
   flex-direction: column;
   align-items: center;
+  margin-top: 14px;
+  margin-left: 10px;
+  margin-right: 10px;
 }
 
 ngb-modal-window .video-sharing:last-child {

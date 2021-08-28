@@ -11,10 +11,30 @@
       "scopes": [
         "common"
       ]
+    },
+    {
+      "script": "dist/facebook-svg.js",
+      "scopes": []
+    },
+    {
+      "script": "dist/gab-svg.js",
+      "scopes": []
+    },
+    {
+      "script": "dist/linkedin-svg.js",
+      "scopes": []
+    },
+    {
+      "script": "dist/mewe-svg.js",
+      "scopes": []
+    },
+    {
+      "script": "dist/twitter-svg.js",
+      "scopes": []
     }
   ],
   "css": [
-    "assets/css/client-helpers.css"
+    "assets/style.css"
   ],
   "devDependencies": {
     "dotenv": "^10.0.0",
@@ -53,7 +73,6 @@
   },
   "standard": {
     "globals": [
-      "Event",
       "MutationObserver"
     ]
   }

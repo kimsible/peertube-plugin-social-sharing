@@ -1,16 +1,30 @@
-import twitterIcon from '../assets/images/twitter.svg'
-import facebookIcon from '../assets/images/facebook.svg'
-import gabIcon from '../assets/images/gab.svg'
-import linkedinIcon from '../assets/images/linkedin.svg'
-import meweIcon from '../assets/images/mewe.svg'
+import servicesJSON from '../assets/services.json'
 
 export { register }
 
-let translate
+let translate, services
 
 async function register ({ registerHook, peertubeHelpers }) {
   // Expose required PeerTube Helpers
   translate = peertubeHelpers.translate
+
+  // Load settings
+  const settings = await peertubeHelpers.getSettings()
+
+  // Filter services
+  services = servicesJSON.filter(service => {
+    const name = service.label.toLowerCase()
+
+    if (!(name in settings && settings[name])) return false
+
+    service.name = name
+    return service
+  })
+
+  // Pre-load icons
+  for (const service of services) {
+    service.sourceIcon = await import(/* webpackChunkName: "[request]" */ `../assets/icons/${service.name}.svg`).then(module => module.default)
+  }
 
   let onModalOpenObserver
   registerHook({
@@ -33,124 +47,99 @@ async function register ({ registerHook, peertubeHelpers }) {
   })
 }
 
-async function buildButton ({ name, sharerLink, inputRef, iconHTML, filters }) {
-  const icon = document.createElement('div')
-  icon.innerHTML = iconHTML
-
+async function buildButton ({
+  name,
+  label,
+  sharerLink,
+  sourceIcon,
+  sourceTitle,
+  sourceLink,
+  inputFilterElements
+}) {
+  // Button structure
   const button = document.createElement('a')
+  button.classList.add('video-sharing', name)
   button.target = '_blank'
   button.tabIndex = 0
 
-  const label = await translate('Share on')
-  button.title = `${label} ${name}`
-  button.classList.add('video-sharing', name.toLowerCase())
+  // Button icon
+  const icon = document.createElement('div')
+  icon.innerHTML = sourceIcon
   button.appendChild(icon)
-  button.innerHTML += name
 
+  // Button title and label
+  const titlePrefix = await translate('Share on')
+  button.title = `${titlePrefix} ${label}`
+  button.innerHTML += label
+
+  // Button link builder
   const buildButtonLink = () => {
-    const sourceLink = inputRef.value
-    button.href = sharerLink + encodeURIComponent(sourceLink)
+    button.href = sharerLink
+      .replace('%body', encodeURIComponent(sourceTitle))
+      .replace('%link', encodeURIComponent(sourceLink))
   }
 
   buildButtonLink()
 
-  // Re-build buttonLink for each alteration of the source link with a filter
-  filters.forEach(filter => {
-    filter.addEventListener('change', buildButtonLink)
-    filter.addEventListener('input', buildButtonLink)
+  // Re-build buttonLink for each alteration of the source link to share with a filter
+  inputFilterElements.forEach(inputFilter => {
+    inputFilter.addEventListener('change', buildButtonLink)
+    inputFilter.addEventListener('input', buildButtonLink)
   })
 
   return button
 }
 
-async function displayButtons (type) {
-  const modalContainer = document.querySelector(`ngb-modal-window .${type}`)
+async function displayButtons (contentType) {
+  const modalContainer = document.querySelector(`ngb-modal-window .${contentType}`)
 
-  // my-input-readonly-copy is for backward compatibility
-  const inputToggleHiddenElem = modalContainer.querySelector('my-input-toggle-hidden') || modalContainer.querySelector('my-input-readonly-copy')
+  // Get input link element
+  const inputLinkElement = (
+    modalContainer.querySelector('my-input-toggle-hidden') ||
+    modalContainer.querySelector('my-input-readonly-copy') // my-input-readonly-copy is for backward compatibility
+  ).querySelector('input')
 
-  const nativeInput = inputToggleHiddenElem.querySelector('input')
-  const filters = modalContainer.querySelectorAll('my-peertube-checkbox input, my-timestamp-input input')
-  const contentTitle = getContentTitle(type) || ''
+  // Source title to share
+  let sourceTitle
+  try {
+    const titleElement = (
+      document.querySelector('h1.video-info-name') || // watch video view
+      document.querySelector('my-video-watch-playlist .playlist-info .playlist-display-name') || // watch playlist view
+      document.querySelector('.playlist-info .miniature a') // my-library playlist view
+    )
 
+    if (titleElement.querySelector('.badge') !== null) titleElement.querySelector('.badge').remove() // remove privacy badge
+
+    sourceTitle = titleElement.innerText
+  } catch {
+    sourceTitle = '' // in case html structure changed return empty string
+  }
+
+  // Source link to share
+  const sourceLink = inputLinkElement.value
+
+  // Input filter elements (checkbox and timestamp fields)
+  const inputFilterElements = modalContainer.querySelectorAll('my-peertube-checkbox input, my-timestamp-input input')
+
+  // Buttons container
   const container = document.createElement('div')
+
+  // Insert buttons to container
+  for (const service of services) {
+    const button = await buildButton({
+      ...service,
+      sourceTitle,
+      sourceLink,
+      inputFilterElements
+    })
+
+    container.appendChild(button)
+  }
+
   container.classList.add('video-sharing-container')
 
-  const facebookButton = await buildButton({
-    name: 'Facebook',
-    inputRef: nativeInput,
-    sharerLink: 'https://www.facebook.com/sharer/sharer.php?display=page&u=',
-    iconHTML: facebookIcon,
-    filters
-  })
-
-  const gabButton = await buildButton({
-    name: 'Gab',
-    inputRef: nativeInput,
-    sharerLink: `https://gab.com/compose?text=${contentTitle}&url=`,
-    iconHTML: gabIcon,
-    filters
-  })
-
-  const twitterButton = await buildButton({
-    name: 'Twitter',
-    inputRef: nativeInput,
-    sharerLink: `https://twitter.com/intent/tweet?text=${contentTitle}&url=`,
-    iconHTML: twitterIcon,
-    filters
-  })
-
-  const linkedinButton = await buildButton({
-    name: 'LinkedIn',
-    inputRef: nativeInput,
-    sharerLink: `https://www.linkedin.com/shareArticle?mini=true&title=${contentTitle}&url=`,
-    iconHTML: linkedinIcon,
-    filters
-  })
-
-  const meweButton = await buildButton({
-    name: 'MeWe',
-    inputRef: nativeInput,
-    sharerLink: 'https://mewe.com/share?link=',
-    iconHTML: meweIcon,
-    filters
-  })
-
-  container.appendChild(facebookButton)
-  container.appendChild(twitterButton)
-  container.appendChild(gabButton)
-  container.appendChild(linkedinButton)
-  container.appendChild(meweButton)
-
-  inputToggleHiddenElem.parentElement.insertBefore(container, inputToggleHiddenElem)
-}
-
-function getContentTitle (type) {
-  if (type === 'video') {
-    const nameIntoWatchVideoView = document.querySelector('h1.video-info-name')
-
-    if (nameIntoWatchVideoView !== null) {
-      return nameIntoWatchVideoView.innerText
-    }
-  }
-
-  if (type === 'playlist') {
-    const nameIntoWatchPlaylistView = document.querySelector('my-video-watch-playlist .playlist-info .playlist-display-name')
-    const nameIntoMyLibraryView = document.querySelector('.playlist-info .miniature a')
-
-    if (nameIntoWatchPlaylistView !== null) {
-      // remove badge
-      if (nameIntoWatchPlaylistView.querySelector('.badge') !== null) {
-        nameIntoWatchPlaylistView.querySelector('.badge').remove()
-      }
-
-      return nameIntoWatchPlaylistView.innerText
-    }
-
-    if (nameIntoMyLibraryView !== null) {
-      return nameIntoMyLibraryView.innerText
-    }
-  }
+  // Insert buttons container
+  inputLinkElement.parentElement.insertBefore(container, inputLinkElement)
 }
 
 function onModalOpen (callback) {
