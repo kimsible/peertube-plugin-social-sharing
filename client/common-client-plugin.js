@@ -33,7 +33,7 @@ async function register ({ registerHook, peertubeHelpers }) {
   })
 }
 
-async function createButton ({ name, sharerLink, inputRef, iconHTML, filters }) {
+async function buildButton ({ name, sharerLink, inputRef, iconHTML, filters }) {
   const icon = document.createElement('div')
   icon.innerHTML = iconHTML
 
@@ -47,16 +47,17 @@ async function createButton ({ name, sharerLink, inputRef, iconHTML, filters }) 
   button.appendChild(icon)
   button.innerHTML += name
 
-  const getLink = () => {
-    const link = inputRef.value
-    button.href = sharerLink + encodeURIComponent(link)
+  const buildButtonLink = () => {
+    const sourceLink = inputRef.value
+    button.href = sharerLink + encodeURIComponent(sourceLink)
   }
 
-  getLink()
+  buildButtonLink()
 
+  // Re-build buttonLink for each alteration of the source link with a filter
   filters.forEach(filter => {
-    filter.addEventListener('change', getLink)
-    filter.addEventListener('input', getLink)
+    filter.addEventListener('change', buildButtonLink)
+    filter.addEventListener('input', buildButtonLink)
   })
 
   return button
@@ -75,7 +76,7 @@ async function displayButtons (type) {
   const container = document.createElement('div')
   container.classList.add('video-sharing-container')
 
-  const facebookButton = await createButton({
+  const facebookButton = await buildButton({
     name: 'Facebook',
     inputRef: nativeInput,
     sharerLink: 'https://www.facebook.com/sharer/sharer.php?display=page&u=',
@@ -83,7 +84,7 @@ async function displayButtons (type) {
     filters
   })
 
-  const gabButton = await createButton({
+  const gabButton = await buildButton({
     name: 'Gab',
     inputRef: nativeInput,
     sharerLink: `https://gab.com/compose?text=${contentTitle}&url=`,
@@ -91,7 +92,7 @@ async function displayButtons (type) {
     filters
   })
 
-  const twitterButton = await createButton({
+  const twitterButton = await buildButton({
     name: 'Twitter',
     inputRef: nativeInput,
     sharerLink: `https://twitter.com/intent/tweet?text=${contentTitle}&url=`,
@@ -99,7 +100,7 @@ async function displayButtons (type) {
     filters
   })
 
-  const linkedinButton = await createButton({
+  const linkedinButton = await buildButton({
     name: 'LinkedIn',
     inputRef: nativeInput,
     sharerLink: `https://www.linkedin.com/shareArticle?mini=true&title=${contentTitle}&url=`,
@@ -107,7 +108,7 @@ async function displayButtons (type) {
     filters
   })
 
-  const meweButton = await createButton({
+  const meweButton = await buildButton({
     name: 'MeWe',
     inputRef: nativeInput,
     sharerLink: 'https://mewe.com/share?link=',
