@@ -17,9 +17,9 @@ async function register ({ registerHook, peertubeHelpers }) {
         onModalOpenObserver.disconnect()
       }
 
-      if (/^\/videos\/watch|^\/w\//.test(path)) {
+      if (/^\/(videos\/watch|w)\/.+/.test(path)) {
         onModalOpenObserver = onModalOpen(() => {
-          createTabObserver({ video: true, playlist: /^\/videos\/watch|^\/w\/p\//.test(path) })
+          createTabObserver({ video: true, playlist: /^\/(videos\/watch|w\/p)\/.+/.test(path) })
         })
       } else if (/^\/my-(account|library)\/video-playlists/.test(path)) {
         onModalOpenObserver = onModalOpen(() => {
@@ -37,6 +37,7 @@ async function createButton ({ name, sharerLink, inputRef, iconHTML, filters }) 
   const button = document.createElement('a')
   button.target = '_blank'
   button.tabIndex = 0
+
   const label = await translate('Share on')
   button.title = `${label} ${name}`
   button.classList.add('video-sharing', name.toLowerCase())
@@ -44,8 +45,8 @@ async function createButton ({ name, sharerLink, inputRef, iconHTML, filters }) 
   button.innerHTML += name
 
   const getLink = () => {
-    const videoLink = inputRef.value
-    button.href = sharerLink + encodeURIComponent(videoLink + `?utm_source=${name.toLowerCase()}&utm_medium=social&utm_campaign=video%20share`)
+    const link = inputRef.value
+    button.href = sharerLink + encodeURIComponent(link + `?utm_source=${name.toLowerCase()}&utm_medium=social&utm_campaign=video%20share`)
   }
 
   getLink()
@@ -60,18 +61,13 @@ async function createButton ({ name, sharerLink, inputRef, iconHTML, filters }) 
 
 async function displayButtons (type) {
   const modalContainer = document.querySelector(`ngb-modal-window .${type}`)
+
   // my-input-readonly-copy is for backward compatibility
-  const inputToggleHidenElem = modalContainer.querySelector('my-input-toggle-hidden') || modalContainer.querySelector('my-input-readonly-copy')
-  const nativeInput = inputToggleHidenElem.querySelector('input')
+  const inputToggleHiddenElem = modalContainer.querySelector('my-input-toggle-hidden') || modalContainer.querySelector('my-input-readonly-copy')
+
+  const nativeInput = inputToggleHiddenElem.querySelector('input')
   const filters = modalContainer.querySelectorAll('my-peertube-checkbox input, my-timestamp-input input')
-
-  // If buttons already injected remove them
-  const buttonsContainers = inputToggleHidenElem.parentElement.querySelectorAll('.video-sharing-container')
-  buttonsContainers.forEach(buttonsContainer => {
-    buttonsContainer.remove()
-  })
-
-  const videoTitle = document.querySelector('h1.video-info-name').innerText
+  const contentTitle = getContentTitle(type) || ''
 
   const container = document.createElement('div')
   container.classList.add('video-sharing-container')
@@ -87,7 +83,7 @@ async function displayButtons (type) {
   const gabButton = await createButton({
     name: 'Gab',
     inputRef: nativeInput,
-    sharerLink: `https://gab.com/compose?text=${videoTitle}&url=`,
+    sharerLink: `https://gab.com/compose?text=${contentTitle}&url=`,
     iconHTML: gabIcon,
     filters
   })
@@ -95,7 +91,7 @@ async function displayButtons (type) {
   const twitterButton = await createButton({
     name: 'Twitter',
     inputRef: nativeInput,
-    sharerLink: `https://twitter.com/intent/tweet?text=${videoTitle}&url=`,
+    sharerLink: `https://twitter.com/intent/tweet?text=${contentTitle}&url=`,
     iconHTML: twitterIcon,
     filters
   })
@@ -103,7 +99,7 @@ async function displayButtons (type) {
   const linkedinButton = await createButton({
     name: 'LinkedIn',
     inputRef: nativeInput,
-    sharerLink: `https://www.linkedin.com/shareArticle?mini=true&title=${videoTitle}&url=`,
+    sharerLink: `https://www.linkedin.com/shareArticle?mini=true&title=${contentTitle}&url=`,
     iconHTML: linkedinIcon,
     filters
   })
@@ -122,7 +118,35 @@ async function displayButtons (type) {
   container.appendChild(linkedinButton)
   container.appendChild(meweButton)
 
-  inputToggleHidenElem.parentElement.insertBefore(container, inputToggleHidenElem)
+  inputToggleHiddenElem.parentElement.insertBefore(container, inputToggleHiddenElem)
+}
+
+function getContentTitle (type) {
+  if (type === 'video') {
+    const nameIntoWatchVideoView = document.querySelector('h1.video-info-name')
+
+    if (nameIntoWatchVideoView !== null) {
+      return nameIntoWatchVideoView.innerText
+    }
+  }
+
+  if (type === 'playlist') {
+    const nameIntoWatchPlaylistView = document.querySelector('my-video-watch-playlist .playlist-info .playlist-display-name')
+    const nameIntoMyLibraryView = document.querySelector('.playlist-info .miniature a')
+
+    if (nameIntoWatchPlaylistView !== null) {
+      // remove badge
+      if (nameIntoWatchPlaylistView.querySelector('.badge') !== null) {
+        nameIntoWatchPlaylistView.querySelector('.badge').remove()
+      }
+
+      return nameIntoWatchPlaylistView.innerText
+    }
+
+    if (nameIntoMyLibraryView !== null) {
+      return nameIntoMyLibraryView.innerText
+    }
+  }
 }
 
 function onModalOpen (callback) {
@@ -150,12 +174,11 @@ function onModalOpen (callback) {
 }
 
 function createTabObserver ({ video, playlist }) {
-  const runAction = target => {
+  const runAction = (target, type) => {
     const selected = target.getAttribute('aria-selected')
 
     if (selected) {
-      if (video) displayButtons('video')
-      if (playlist) displayButtons('playlist')
+      displayButtons(type)
     }
   }
 
@@ -173,7 +196,7 @@ function createTabObserver ({ video, playlist }) {
     const nav = document.querySelector(`ngb-modal-window .${type} .nav`)
     const tab = nav.querySelectorAll('.nav-link')[0]
 
-    runAction(tab)
+    runAction(tab, type)
 
     observer.observe(tab, {
       attributes: true
