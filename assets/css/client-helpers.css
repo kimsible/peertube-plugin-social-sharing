@@ -10,7 +10,7 @@ ngb-modal-window .video-sharing-container {
 ngb-modal-window .video-sharing {
   margin-right: 10px;
   cursor: pointer;
-  display: inline-block;
+  display: inline-flex;
   text-decoration: none !important;
   outline: none !important;
   color: #000;
