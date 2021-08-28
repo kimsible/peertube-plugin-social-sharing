@@ -178,29 +178,29 @@ function onModalOpen (callback) {
 }
 
 function createTabObserver ({ video, playlist }) {
-  const runAction = (target, type) => {
+  const runAction = (target, contentType) => {
     const selected = target.getAttribute('aria-selected')
 
     if (selected) {
-      displayButtons(type)
+      displayButtons(contentType)
     }
   }
 
-  const observeTab = async type => {
+  const observeTab = async (contentType) => {
     const observer = new MutationObserver(mutations => {
       for (const mutation of mutations) {
         const { type, attributeName, target } = mutation
 
         if ((type === 'attributes') && (attributeName === 'aria-selected') && (target.getAttribute('aria-selected') === 'true')) {
-          runAction(target)
+          runAction(target, contentType)
         }
       }
     })
 
-    const nav = document.querySelector(`ngb-modal-window .${type} .nav`)
+    const nav = document.querySelector(`ngb-modal-window .${contentType} .nav`)
     const tab = nav.querySelectorAll('.nav-link')[0]
 
-    runAction(tab, type)
+    runAction(tab, contentType)
 
     observer.observe(tab, {
       attributes: true
