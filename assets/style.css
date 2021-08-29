@@ -53,6 +53,10 @@ ngb-modal-window .video-sharing.reddit svg {
   fill: #ff4500;
 }
 
+ngb-modal-window .video-sharing.tumblr svg {
+  fill: #001935;
+}
+
 ngb-modal-window label.share-link {
   align-self: start;
 }

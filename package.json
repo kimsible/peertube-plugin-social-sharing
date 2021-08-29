@@ -41,6 +41,10 @@
       "scopes": []
     },
     {
+      "script": "dist/tumblr-svg.js",
+      "scopes": []
+    },
+    {
       "script": "dist/twitter-svg.js",
       "scopes": []
     }

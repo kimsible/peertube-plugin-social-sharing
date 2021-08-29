@@ -22,6 +22,10 @@
     "sharerLink": "https://reddit.com/submit?url=%link&title=%body"
   },
   {
+    "label": "Tumblr",
+    "sharerLink": "https://tumblr.com/share/link?url=%link"
+  },
+  {
     "label": "LinkedIn",
     "sharerLink": "https://linkedin.com/sharing/share-offsite/?url=%link"
   },
