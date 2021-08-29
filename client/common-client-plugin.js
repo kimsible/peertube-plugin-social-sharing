@@ -108,6 +108,19 @@ async function buildButton ({
         modalBodyElement.innerHTML = sourceIcon
         modalBodyElement.appendChild(paragraph)
         modalBodyElement.appendChild(input)
+
+        // Disable modal share button
+        const shareButtonElement = modalDialogElement.querySelector('.modal-footer input:last-child')
+        shareButtonElement.disabled = true
+
+        // Domain checker
+        input.addEventListener('keydown', () => {
+          if (/^https?:\/\/[a-z\d]+\.[a-z]{2,}(\.[a-z]{2,})?$/.test(input.value)) {
+            shareButtonElement.removeAttribute('disabled')
+          } else {
+            shareButtonElement.disabled = true
+          }
+        })
       }, true)
 
       showModal({
