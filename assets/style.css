@@ -56,6 +56,10 @@ ngb-modal-window label.share-link {
   align-self: start;
 }
 
+.modal + .modal-backdrop {
+  z-index: 16000 !important;
+}
+
 ngb-modal-window .custom-domain .modal-header {
   display: flex;
   justify-content: center;
