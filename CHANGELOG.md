@@ -9,6 +9,7 @@
 - Fediverse / custom domain support
 - Mastodon, Reddit, WordPress (with [Press It](https://codex.wordpress.org/Press_It)) and Tumblr services
 - Update LinkedIn sharer link
+- Update Readme for requesting services
 
 ## [0.8.3] - 2021-08-28
 
