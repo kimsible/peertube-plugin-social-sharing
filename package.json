@@ -17,6 +17,10 @@
       "scopes": []
     },
     {
+      "script": "dist/reddit-svg.js",
+      "scopes": []
+    },
+    {
       "script": "dist/gab-svg.js",
       "scopes": []
     },

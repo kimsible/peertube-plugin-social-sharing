@@ -8,6 +8,10 @@
     "sharerLink": "https://twitter.com/intent/tweet?text=%body&url=%link"
   },
   {
+    "label": "reddit",
+    "sharerLink": "https://reddit.com/submit?url=%link&title=%body"
+  },
+  {
     "label": "LinkedIn",
     "sharerLink": "https://linkedin.com/shareArticle?mini=true&title=%body&url=%link"
   },

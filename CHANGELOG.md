@@ -6,6 +6,7 @@
 
 - Ability to add multiple services and select them from plugin settings
 - Improve display
+- Reddit service
 
 ## [0.8.3] - 2021-08-28
 
