@@ -1,5 +1,10 @@
 [
   {
+    "label": "Mastodon",
+    "sharerLink": "share?text=%body%20%link",
+    "customDomain": true
+  },
+  {
     "label": "Facebook",
     "sharerLink": "https://facebook.com/sharer/sharer.php?display=page&u=%link"
   },

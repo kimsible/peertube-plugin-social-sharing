@@ -13,6 +13,10 @@
       ]
     },
     {
+      "script": "dist/mastodon-svg.js",
+      "scopes": []
+    },
+    {
       "script": "dist/facebook-svg.js",
       "scopes": []
     },
