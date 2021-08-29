@@ -5,3 +5,4 @@
 - facebook
 - twitter
 - reddit
+- linkedin
