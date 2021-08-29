@@ -115,7 +115,7 @@ async function buildButton ({
 
         // Domain checker
         input.addEventListener('keyup', () => {
-          if (/^https?:\/\/[a-z\d]+\.[a-z]{2,}(\.[a-z]{2,})?$/.test(input.value)) {
+          if (/^https?:\/\/[a-z\d]+\.[a-z]{2,}(\.[a-z]{2,})?\/?$/.test(input.value)) {
             shareButtonElement.removeAttribute('disabled')
           } else {
             shareButtonElement.disabled = true
@@ -132,7 +132,8 @@ async function buildButton ({
           value: shareLabel,
           action: () => {
             onModalOpenObserver.disconnect()
-            window.open(`${input.value}/${href}`)
+            const domain = input.value.replace(/\/$/, '') // trim any last slash
+            window.open(`${domain}/${href}`)
           }
         }
       })
