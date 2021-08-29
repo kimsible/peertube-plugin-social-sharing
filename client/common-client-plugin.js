@@ -114,7 +114,7 @@ async function buildButton ({
         shareButtonElement.disabled = true
 
         // Domain checker
-        input.addEventListener('keydown', () => {
+        input.addEventListener('keyup', () => {
           if (/^https?:\/\/[a-z\d]+\.[a-z]{2,}(\.[a-z]{2,})?$/.test(input.value)) {
             shareButtonElement.removeAttribute('disabled')
           } else {
