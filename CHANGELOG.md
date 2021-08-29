@@ -7,7 +7,8 @@
 - Ability to add multiple services and select them from plugin settings
 - Improve display
 - Fediverse / custom domain support
-- Reddit, WordPress and Mastodon services
+- Mastodon, Reddit, WordPress (with [Press It](https://codex.wordpress.org/Press_It)) and Tumblr services
+- Update LinkedIn sharer link
 
 ## [0.8.3] - 2021-08-28
 
