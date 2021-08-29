@@ -23,7 +23,7 @@
   },
   {
     "label": "LinkedIn",
-    "sharerLink": "https://linkedin.com/shareArticle?mini=true&title=%body&url=%link"
+    "sharerLink": "https://linkedin.com/sharing/share-offsite/?url=%link"
   },
   {
     "label": "Gab",
