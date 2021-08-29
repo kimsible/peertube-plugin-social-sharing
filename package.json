@@ -1,6 +1,6 @@
 {
   "name": "peertube-plugin-social-sharing",
-  "description": "Share a video or playlist URL on social media Facebook and Twitter",
+  "description": "Share a video or playlist URL on social media (Mastodon, WordPress, reddit, Twitter, etc.)",
   "version": "0.8.3",
   "author": "kimsible",
   "license": "AGPL-3.0",

@@ -6,7 +6,8 @@
 
 - Ability to add multiple services and select them from plugin settings
 - Improve display
-- Reddit service
+- Fediverse / custom domain support
+- Reddit, WordPress and Mastodon services
 
 ## [0.8.3] - 2021-08-28
 
