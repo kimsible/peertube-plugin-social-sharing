@@ -114,13 +114,19 @@ async function buildButton ({
         shareButtonElement.disabled = true
 
         // Domain checker
-        input.addEventListener('keyup', () => {
+        const domainChecker = () => {
           if (/^https?:\/\/[a-z\d]+\.[a-z]{2,}(\.[a-z]{2,})?\/?$/.test(input.value)) {
             shareButtonElement.removeAttribute('disabled')
           } else {
             shareButtonElement.disabled = true
           }
-        })
+        }
+
+        // Run if input already filled
+        domainChecker()
+
+        // Run on keyup (writing and paste)
+        input.addEventListener('keyup', domainChecker)
       }, true)
 
       showModal({
