@@ -19,9 +19,10 @@ ngb-modal-window .video-sharing {
   color: #000;
   flex-direction: column;
   align-items: center;
-  margin-top: 14px;
-  margin-left: 10px;
-  margin-right: 10px;
+  margin-top: 10px;
+  margin-bottom: 10px;
+  margin-left: 13px;
+  margin-right: 13px;
 }
 
 ngb-modal-window .video-sharing:last-child {
@@ -29,8 +30,8 @@ ngb-modal-window .video-sharing:last-child {
 }
 
 ngb-modal-window .video-sharing svg {
-  width: 40px;
-  height: 40px;
+  width: 60px;
+  height: 60px;
   fill: var(--greyForegroundColor);
   stroke: transparent;
   margin-bottom: 5px;
