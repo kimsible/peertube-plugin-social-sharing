@@ -2,11 +2,12 @@ import servicesJSON from '../assets/services.json'
 
 export { register }
 
-let translate, services
+let translate, services, showModal
 
 async function register ({ registerHook, peertubeHelpers }) {
   // Expose required PeerTube Helpers
   translate = peertubeHelpers.translate
+  showModal = peertubeHelpers.showModal
 
   // Load settings
   const settings = await peertubeHelpers.getSettings()
@@ -52,6 +53,7 @@ async function buildButton ({
   label,
   sharerLink,
   sourceIcon,
+  customDomain,
   sourceTitle,
   sourceLink,
   inputFilterElements
@@ -73,19 +75,83 @@ async function buildButton ({
   button.innerHTML += label
 
   // Button link builder
-  const buildButtonLink = () => {
-    button.href = sharerLink
-      .replace('%body', encodeURIComponent(sourceTitle))
-      .replace('%link', encodeURIComponent(sourceLink))
+  const buildButtonLink = () => sharerLink
+    .replace('%body', encodeURIComponent(sourceTitle))
+    .replace('%link', encodeURIComponent(sourceLink))
+
+  // Custom domain like Fediverse, WordPress
+  if (customDomain) {
+    let href = buildButtonLink()
+    const instructionsText = await translate('Enter the instance\'s address')
+    const cancelLabel = await translate('Cancel')
+    const shareLabel = await translate('Share')
+
+    // Input custom domain
+    const input = document.createElement('input')
+    input.type = 'text'
+    input.placeholder = 'https://domain.org'
+    input.classList.add('form-control')
+
+    // Instructions container
+    const paragraph = document.createElement('p')
+    paragraph.innerText = instructionsText
+
+    button.addEventListener('click', () => {
+      const onModalOpenObserver = onModalOpen(modalElement => {
+        // Customize modal
+        const modalDialogElement = modalElement.querySelector('.modal-dialog')
+        modalDialogElement.classList.remove('modal-lg')
+        modalDialogElement.classList.add('custom-domain')
+
+        // Inject all elements to modal body
+        const modalBodyElement = modalElement.querySelector('.modal-body')
+        modalBodyElement.innerHTML = sourceIcon
+        modalBodyElement.appendChild(paragraph)
+        modalBodyElement.appendChild(input)
+
+        // Disable modal share button
+        const shareButtonElement = modalDialogElement.querySelector('.modal-footer input:last-child')
+        shareButtonElement.disabled = true
+
+        // Domain checker
+        input.addEventListener('keyup', () => {
+          if (/^https?:\/\/[a-z\d]+\.[a-z]{2,}(\.[a-z]{2,})?$/.test(input.value)) {
+            shareButtonElement.removeAttribute('disabled')
+          } else {
+            shareButtonElement.disabled = true
+          }
+        })
+      }, true)
+
+      showModal({
+        title: button.title,
+        content: '',
+        close: false,
+        cancel: { value: cancelLabel, action: () => { onModalOpenObserver.disconnect() } },
+        confirm: {
+          value: shareLabel,
+          action: () => {
+            onModalOpenObserver.disconnect()
+            window.open(`${input.value}/${href}`)
+          }
+        }
+      })
+    })
+
+    // Re-build buttonLink for each alteration of the source link to share with a filter
+    inputFilterElements.forEach(inputFilter => {
+      inputFilter.addEventListener('change', () => { href = buildButtonLink() })
+      inputFilter.addEventListener('input', () => { href = buildButtonLink() })
+    })
+  } else {
+    button.href = buildButtonLink()
+
+    // Re-build buttonLink for each alteration of the source link to share with a filter
+    inputFilterElements.forEach(inputFilter => {
+      inputFilter.addEventListener('change', () => { button.href = buildButtonLink() })
+      inputFilter.addEventListener('input', () => { button.href = buildButtonLink() })
+    })
   }
-
-  buildButtonLink()
-
-  // Re-build buttonLink for each alteration of the source link to share with a filter
-  inputFilterElements.forEach(inputFilter => {
-    inputFilter.addEventListener('change', buildButtonLink)
-    inputFilter.addEventListener('input', buildButtonLink)
-  })
 
   return button
 }
@@ -142,17 +208,19 @@ async function displayButtons (contentType) {
   inputLinkElement.parentElement.insertBefore(container, inputLinkElement)
 }
 
-function onModalOpen (callback) {
+function onModalOpen (callback, customModal = false) {
   const observer = new MutationObserver(mutations => {
     for (const mutation of mutations) {
       const { type, addedNodes } = mutation
 
       if (type === 'childList') {
         addedNodes.forEach(addedNode => {
-          if (addedNode.localName === 'ngb-modal-window') {
-            if (document.querySelector('ngb-modal-window .video') || document.querySelector('ngb-modal-window .playlist')) {
-              callback()
-            }
+          if (addedNode.localName === 'ngb-modal-window' && customModal) {
+            callback(addedNode)
+          }
+
+          if (addedNode.localName === 'ngb-modal-window' && addedNode.querySelector('.video, .playlist')) {
+            callback()
           }
         })
       }

@@ -55,3 +55,29 @@ ngb-modal-window .video-sharing.reddit svg {
 ngb-modal-window label.share-link {
   align-self: start;
 }
+
+.modal + .modal-backdrop {
+  z-index: 16000 !important;
+}
+
+ngb-modal-window .custom-domain .modal-header {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+}
+
+ngb-modal-window .custom-domain .modal-body {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  flex-direction: column;
+}
+
+ngb-modal-window .custom-domain .modal-body p {
+  align-self: flex-start;
+}
+
+ngb-modal-window .custom-domain .modal-body svg {
+  width: 140px;
+  margin-bottom: 45px;
+}
