@@ -5,6 +5,11 @@
     "customDomain": true
   },
   {
+    "label": "WordPress",
+    "sharerLink": "wp-admin/press-this.php?u=%link&t=%body",
+    "customDomain": true
+  },
+  {
     "label": "Facebook",
     "sharerLink": "https://facebook.com/sharer/sharer.php?display=page&u=%link"
   },

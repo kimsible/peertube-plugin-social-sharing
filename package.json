@@ -17,6 +17,10 @@
       "scopes": []
     },
     {
+      "script": "dist/wordpress-svg.js",
+      "scopes": []
+    },
+    {
       "script": "dist/facebook-svg.js",
       "scopes": []
     },

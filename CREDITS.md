@@ -6,3 +6,4 @@
 - twitter
 - reddit
 - linkedin
+- wordpress
