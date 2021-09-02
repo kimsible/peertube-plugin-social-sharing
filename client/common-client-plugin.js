@@ -82,7 +82,7 @@ async function buildButton ({
   // Custom domain like Fediverse, WordPress
   if (customDomain) {
     let href = buildButtonLink()
-    const instructionsText = await translate('Enter the instance\'s address')
+    const instructionsText = await translate('Enter the instance’s address')
     const cancelLabel = await translate('Cancel')
     const shareLabel = await translate('Share')
 
