@@ -1,5 +1,15 @@
 # Changelog
 
+## [0.9.1] - 2021-09-02
+
+### Added
+
+- Gd language support
+
+### Fixed
+
+- Remove a single quote in key translation + use apostrophe instead of single quote for possessive form
+
 ## [0.9.0] - 2021-08-29
 
 ### Added
