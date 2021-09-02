@@ -75,8 +75,9 @@
   },
   "staticDirs": {},
   "translations": {
-    "sv-SE": "./languages/sv.json",
-    "fr-FR": "./languages/fr.json"
+    "fr-FR": "./languages/fr.json",
+    "gd": "./languages/gd.json",
+    "sv-SE": "./languages/sv.json"
   },
   "dependencies": {},
   "husky": {
