@@ -1,4 +1,5 @@
 import servicesJSON from '../assets/services.json'
+const icons = import.meta.globEager('../assets/icons/*.svg')
 
 export { register }
 
@@ -24,7 +25,11 @@ async function register ({ registerHook, peertubeHelpers }) {
 
   // Pre-load icons
   for (const service of services) {
-    service.sourceIcon = await import(/* webpackChunkName: "[request]" */ `../assets/icons/${service.name}.svg`).then(module => module.default)
+    service.icon = await new Promise(resolve => {
+      const image = new Image()
+      image.onload = () => { resolve(image) }
+      image.src = icons[`../assets/icons/${service.name}.svg`].default
+    })
   }
 
   let onModalOpenObserver
@@ -52,7 +57,7 @@ async function buildButton ({
   name,
   label,
   sharerLink,
-  sourceIcon,
+  icon,
   customDomain,
   sourceTitle,
   sourceLink,
@@ -65,8 +70,6 @@ async function buildButton ({
   button.tabIndex = 0
 
   // Button icon
-  const icon = document.createElement('div')
-  icon.innerHTML = sourceIcon
   button.appendChild(icon)
 
   // Button title and label
@@ -105,7 +108,7 @@ async function buildButton ({
 
         // Inject all elements to modal body
         const modalBodyElement = modalElement.querySelector('.modal-body')
-        modalBodyElement.innerHTML = sourceIcon
+        modalBodyElement.appendChild(icon)
         modalBodyElement.appendChild(paragraph)
         modalBodyElement.appendChild(input)
 

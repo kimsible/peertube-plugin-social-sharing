@@ -1,5 +1,5 @@
 node_modules
 .cache
 dist
-.env
+.env.*.local
 *.swp
