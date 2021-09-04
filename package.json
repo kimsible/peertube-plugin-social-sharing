@@ -11,54 +11,13 @@
       "scopes": [
         "common"
       ]
-    },
-    {
-      "script": "dist/mastodon-svg.js",
-      "scopes": []
-    },
-    {
-      "script": "dist/wordpress-svg.js",
-      "scopes": []
-    },
-    {
-      "script": "dist/facebook-svg.js",
-      "scopes": []
-    },
-    {
-      "script": "dist/reddit-svg.js",
-      "scopes": []
-    },
-    {
-      "script": "dist/gab-svg.js",
-      "scopes": []
-    },
-    {
-      "script": "dist/linkedin-svg.js",
-      "scopes": []
-    },
-    {
-      "script": "dist/mewe-svg.js",
-      "scopes": []
-    },
-    {
-      "script": "dist/tumblr-svg.js",
-      "scopes": []
-    },
-    {
-      "script": "dist/twitter-svg.js",
-      "scopes": []
     }
   ],
-  "css": [
-    "assets/style.css"
-  ],
   "devDependencies": {
-    "dotenv": "^10.0.0",
     "husky": "^4.3.8",
     "lint-staged": "^11.1.2",
     "standard": "^16.0.3",
-    "webpack": "^5.51.1",
-    "webpack-cli": "^4.8.0"
+    "vite": "^2.5.3"
   },
   "engine": {
     "peertube": ">=2.2.0"
@@ -70,10 +29,11 @@
   ],
   "library": "./main.js",
   "scripts": {
-    "dev": "webpack --env dev",
-    "build": "webpack --env prod"
+    "build": "vite build"
   },
-  "staticDirs": {},
+  "css": [
+    "assets/style.css"
+  ],
   "translations": {
     "fr-FR": "./languages/fr.json",
     "gd": "./languages/gd.json",
@@ -90,7 +50,8 @@
   },
   "standard": {
     "globals": [
-      "MutationObserver"
+      "MutationObserver",
+      "Image"
     ]
   }
 }
