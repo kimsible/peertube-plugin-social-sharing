@@ -7,7 +7,7 @@ import livereload from 'rollup-plugin-livereload'
 // npx vite build -m staging - build without minifying
 // npx vite build [-m production] - build and minify
 
-export default async ({ mode }) => {
+export default ({ mode }) => {
   const env = loadEnv(mode, process.cwd(), 'PEERTUBE_')
   const buildPeerTubeDistPath = () => env.PEERTUBE_PATH && resolve(env.PEERTUBE_PATH, `./storage/plugins/node_modules/${pkg.name}/`)
 
