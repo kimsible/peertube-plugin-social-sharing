@@ -30,6 +30,7 @@
   ],
   "library": "./main.js",
   "scripts": {
+    "prepare": "vite build",
     "build": "vite build"
   },
   "css": [
@@ -43,7 +44,7 @@
   "dependencies": {},
   "husky": {
     "hooks": {
-      "pre-commit": "lint-staged && vite build"
+      "pre-commit": "lint-staged"
     }
   },
   "lint-staged": {
