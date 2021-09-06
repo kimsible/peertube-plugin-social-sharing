@@ -32,21 +32,27 @@ async function register ({ registerHook, peertubeHelpers }) {
     })
   }
 
-  let onModalOpenObserver
+  let observer
   registerHook({
     target: 'action:router.navigation-end',
     handler: async ({ path }) => {
-      if (onModalOpenObserver) {
-        onModalOpenObserver.disconnect()
+      if (observer) {
+        observer.disconnect()
       }
 
       if (/^\/(videos\/watch|w)\/.+/.test(path)) {
-        onModalOpenObserver = onModalOpen(() => {
-          createTabObserver({ video: true, playlist: /^\/(videos\/watch|w\/p)\/.+/.test(path) })
+        observer = addModalOpenObserver(node => {
+          onModalOpen(node.querySelector('.video'))
+
+          if (/^\/(videos\/watch\/playlist|w\/p)\/.+/.test(path)) {
+            onModalOpen(node.querySelector('.playlist'))
+          }
         })
-      } else if (/^\/my-(account|library)\/video-playlists/.test(path)) {
-        onModalOpenObserver = onModalOpen(() => {
-          createTabObserver({ playlist: true })
+      }
+
+      if (/^\/my-(account|library)\/video-playlists/.test(path)) {
+        observer = addModalOpenObserver(node => {
+          onModalOpen(node.querySelector('.playlist'))
         })
       }
     }
@@ -60,8 +66,8 @@ async function buildButton ({
   icon,
   customDomain,
   sourceTitle,
-  sourceLink,
-  inputFilterElements
+  inputFilterElements,
+  inputLinkElement
 }) {
   // Button structure
   const button = document.createElement('a')
@@ -78,13 +84,13 @@ async function buildButton ({
   button.innerHTML += label
 
   // Button link builder
-  const buildButtonLink = () => sharerLink
+  const buildButtonLink = (sourceLink) => sharerLink
     .replace('%body', encodeURIComponent(sourceTitle))
     .replace('%link', encodeURIComponent(sourceLink))
 
   // Custom domain like Fediverse, WordPress
   if (customDomain) {
-    let href = buildButtonLink()
+    let href = buildButtonLink(inputLinkElement.value)
     const instructionsText = await translate('Enter the instance’s address')
     const cancelLabel = await translate('Cancel')
     const shareLabel = await translate('Share')
@@ -100,7 +106,7 @@ async function buildButton ({
     paragraph.innerText = instructionsText
 
     button.addEventListener('click', () => {
-      const onModalOpenObserver = onModalOpen(modalElement => {
+      const observer = addModalOpenObserver(modalElement => {
         // Customize modal
         const modalDialogElement = modalElement.querySelector('.modal-dialog')
         modalDialogElement.classList.remove('modal-lg')
@@ -136,11 +142,11 @@ async function buildButton ({
         title: button.title,
         content: '',
         close: false,
-        cancel: { value: cancelLabel, action: () => { onModalOpenObserver.disconnect() } },
+        cancel: { value: cancelLabel, action: () => { observer.disconnect() } },
         confirm: {
           value: shareLabel,
           action: () => {
-            onModalOpenObserver.disconnect()
+            observer.disconnect()
             const domain = input.value.replace(/\/$/, '') // trim any last slash
             window.open(`${domain}/${href}`)
           }
@@ -150,38 +156,32 @@ async function buildButton ({
 
     // Re-build buttonLink for each alteration of the source link to share with a filter
     inputFilterElements.forEach(inputFilter => {
-      inputFilter.addEventListener('change', () => { href = buildButtonLink() })
-      inputFilter.addEventListener('input', () => { href = buildButtonLink() })
+      inputFilter.addEventListener('change', () => { href = buildButtonLink(inputLinkElement.value) })
     })
   } else {
-    button.href = buildButtonLink()
+    button.href = buildButtonLink(inputLinkElement.href)
 
     // Re-build buttonLink for each alteration of the source link to share with a filter
     inputFilterElements.forEach(inputFilter => {
-      inputFilter.addEventListener('change', () => { button.href = buildButtonLink() })
-      inputFilter.addEventListener('input', () => { button.href = buildButtonLink() })
+      inputFilter.addEventListener('change', () => { button.href = buildButtonLink(inputLinkElement.value) })
     })
   }
 
   return button
 }
 
-async function displayButtons (contentType) {
-  const modalContainer = document.querySelector(`ngb-modal-window .${contentType}`)
-
+async function displayButtons (tabContent) {
   // Get input link element
-  const inputLinkElement = (
-    modalContainer.querySelector('my-input-toggle-hidden') ||
-    modalContainer.querySelector('my-input-readonly-copy') // my-input-readonly-copy is for backward compatibility
-  ).querySelector('input')
+  const inputLinkElement = tabContent.querySelector('my-input-toggle-hidden input, my-input-readonly-copy input') // my-input-readonly-copy is for backward compatibility
 
   // Source title to share
   let sourceTitle
   try {
+    const content = document.getElementById('content')
     const titleElement = (
-      document.querySelector('h1.video-info-name') || // watch video view
-      document.querySelector('my-video-watch-playlist .playlist-info .playlist-display-name') || // watch playlist view
-      document.querySelector('.playlist-info .miniature a') // my-library playlist view
+      content.querySelector('h1.video-info-name') || // watch video view
+      content.querySelector('my-video-watch-playlist .playlist-info .playlist-display-name') || // watch playlist view
+      content.querySelector('.playlist-info .miniature a') // my-library playlist view
     )
 
     if (titleElement.querySelector('.badge') !== null) titleElement.querySelector('.badge').remove() // remove privacy badge
@@ -191,11 +191,9 @@ async function displayButtons (contentType) {
     sourceTitle = '' // in case html structure changed return empty string
   }
 
-  // Source link to share
-  const sourceLink = inputLinkElement.value
-
   // Input filter elements (checkbox and timestamp fields)
-  const inputFilterElements = modalContainer.querySelectorAll('my-peertube-checkbox input, my-timestamp-input input')
+  const filtersContainer = tabContent.nextElementSibling
+  const inputFilterElements = filtersContainer.querySelectorAll('my-peertube-checkbox input, my-timestamp-input input')
 
   // Buttons container
   const container = document.createElement('div')
@@ -205,8 +203,8 @@ async function displayButtons (contentType) {
     const button = await buildButton({
       ...service,
       sourceTitle,
-      sourceLink,
-      inputFilterElements
+      inputFilterElements,
+      inputLinkElement
     })
 
     container.appendChild(button)
@@ -218,22 +216,26 @@ async function displayButtons (contentType) {
   inputLinkElement.parentElement.insertBefore(container, inputLinkElement)
 }
 
-function onModalOpen (callback, customModal = false) {
+function onModalOpen (container) {
+  if (container) {
+    const tab = container.querySelector('.nav-tabs').firstChild // first tab
+    addTabSelectObserver(tab, onTabSelect)
+  }
+}
+
+function onTabSelect (node) {
+  const tabContent = node.parentElement.nextElementSibling
+  displayButtons(tabContent)
+}
+
+function addModalOpenObserver (callback) {
   const observer = new MutationObserver(mutations => {
-    for (const mutation of mutations) {
-      const { type, addedNodes } = mutation
-
-      if (type === 'childList') {
-        addedNodes.forEach(addedNode => {
-          if (addedNode.localName === 'ngb-modal-window' && customModal) {
-            callback(addedNode)
-          }
-
-          if (addedNode.localName === 'ngb-modal-window' && addedNode.querySelector('.video, .playlist')) {
-            callback()
-          }
-        })
-      }
+    for (const { addedNodes } of mutations) {
+      addedNodes.forEach(node => {
+        if (node.localName === 'ngb-modal-window') {
+          callback(node)
+        }
+      })
     }
   })
 
@@ -244,36 +246,19 @@ function onModalOpen (callback, customModal = false) {
   return observer
 }
 
-function createTabObserver ({ video, playlist }) {
-  const runAction = (target, contentType) => {
-    const selected = target.getAttribute('aria-selected')
-
-    if (selected) {
-      displayButtons(contentType)
-    }
+function addTabSelectObserver (target, callback) {
+  const onMutation = () => {
+    target.getAttribute('aria-selected') === 'true' && callback(target)
   }
 
-  const observeTab = async (contentType) => {
-    const observer = new MutationObserver(mutations => {
-      for (const mutation of mutations) {
-        const { type, attributeName, target } = mutation
+  const observer = new MutationObserver(onMutation)
 
-        if ((type === 'attributes') && (attributeName === 'aria-selected') && (target.getAttribute('aria-selected') === 'true')) {
-          runAction(target, contentType)
-        }
-      }
-    })
+  onMutation() // if target is already selected
 
-    const nav = document.querySelector(`ngb-modal-window .${contentType} .nav`)
-    const tab = nav.querySelectorAll('.nav-link')[0]
+  observer.observe(target, {
+    attributes: true,
+    attributeFilter: ['aria-selected']
+  })
 
-    runAction(tab, contentType)
-
-    observer.observe(tab, {
-      attributes: true
-    })
-  }
-
-  if (video) observeTab('video')
-  if (playlist) observeTab('playlist')
+  return observer
 }
