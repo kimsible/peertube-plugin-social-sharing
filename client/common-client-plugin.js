@@ -44,17 +44,17 @@ async function register ({ registerHook, peertubeHelpers }) {
 
       if (/^\/(videos\/watch|w)\/.+/.test(path)) {
         observer = addModalOpenObserver(node => {
-          onModalOpen(node.querySelector('.video'))
+          onModalOpen(node, node.querySelector('.video'))
 
           if (/^\/(videos\/watch\/playlist|w\/p)\/.+/.test(path)) {
-            onModalOpen(node.querySelector('.playlist'))
+            onModalOpen(node, node.querySelector('.playlist'))
           }
         })
       }
 
       if (/^\/my-(account|library)\/video-playlists/.test(path)) {
         observer = addModalOpenObserver(node => {
-          onModalOpen(node.querySelector('.playlist'))
+          onModalOpen(node, node.querySelector('.playlist'))
         })
       }
     }
@@ -197,7 +197,11 @@ async function displayButtons (tabContent) {
   inputLinkElement.parentElement.insertBefore(container, inputLinkElement)
 }
 
-function onModalOpen (container) {
+function onModalOpen (node, container) {
+  // avoid weird effect of DOM inserting on first modal show
+  node.style.opacity = 0
+  setTimeout(() => { node.style.opacity = 1 }, 50)
+
   if (container) {
     const tab = container.querySelector('.nav-tabs').firstChild // first tab
     addTabSelectObserver(tab, onTabSelect)
