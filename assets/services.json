@@ -20,6 +20,11 @@
     "customDomain": true
   },
   {
+    "label": "Pleroma",
+    "sharerLink": "notice/new?status_textarea=%body%20%link",
+    "customDomain": true
+  },
+  {
     "label": "Facebook",
     "sharerLink": "https://facebook.com/sharer/sharer.php?display=page&u=%link"
   },
