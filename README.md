@@ -23,6 +23,9 @@ Since v0.9.0 the service list displayed can be filtered via the **plugin setting
 
 - Mastodon
 - WordPress (with [Press It plugin](https://codex.wordpress.org/Press_It))
+- diaspora*
+- Friendica
+- Pleroma
 - Facebook (with sharer.php)
 - Twitter
 - reddit
