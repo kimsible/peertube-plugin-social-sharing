@@ -1,4 +1,6 @@
 import servicesJSON from '../assets/services.json'
+
+import { render, html } from 'uhtml'
 const icons = import.meta.globEager('../assets/icons/*.svg')
 
 export { register }
@@ -69,105 +71,85 @@ async function buildButton ({
   inputFilterElements,
   inputLinkElement
 }) {
-  // Button structure
-  const button = document.createElement('a')
-  button.classList.add('video-sharing', name)
-  button.target = '_blank'
-  button.tabIndex = 0
-
-  // Button icon
-  button.appendChild(icon)
-
-  // Button title and label
-  const titlePrefix = await translate('Share on')
-  button.title = `${titlePrefix} ${label}`
-  button.innerHTML += label
+  // Button title, className, htmlContent
+  const prefix = await translate('Share on')
+  const title = `${prefix} ${label}`
+  const className = `video-sharing ${name}`
+  const htmlContent = html`${icon.cloneNode()}${label}`
 
   // Button link builder
-  const buildButtonLink = (sourceLink) => sharerLink
+  const buildLink = (sourceLink) => sharerLink
     .replace('%body', encodeURIComponent(sourceTitle))
     .replace('%link', encodeURIComponent(sourceLink))
 
-  // Custom domain like Fediverse, WordPress
-  if (customDomain) {
-    let href = buildButtonLink(inputLinkElement.value)
-    const instructionsText = await translate('Enter the instance’s address')
-    const cancelLabel = await translate('Cancel')
-    const shareLabel = await translate('Share')
+  let link = buildLink(inputLinkElement.value)
 
+  // Handle onclick action
+  let onclick
+  if (!customDomain) onclick = () => window.open(link) // Centralized service
+  else onclick = () => buildModal({ title, icon: icon.cloneNode(), link }) // Decentralized service
+
+  // Re-build buttonLink for each alteration of the source link to share with a filter
+  inputFilterElements.forEach(inputFilter => {
+    inputFilter.addEventListener('change', () => { link = buildLink(inputLinkElement.value) })
+  })
+
+  return html`<a onclick="${onclick}" title="${title}" class="${className}" target="_blank" tabIndex=0>${htmlContent}</a>`
+}
+
+async function buildModal ({ title, icon, link }) {
+  let domain
+
+  const observer = addModalOpenObserver(async modal => {
+    // Customize modal
+    modal.classList.add('custom-domain')
+    modal.querySelector('.modal-dialog').classList.remove('modal-lg')
+
+    // Modal confirm button
+    const confirm = modal.querySelector('.modal-footer input:last-child')
+
+    // Domain checker
+    const isDomain = value => /^https?:\/\/[a-z\d]+\.[a-z]{2,}(\.[a-z]{2,})?\/?$/.test(value)
+
+    // Disable or enable modal share confirm
+    const setConfirmUsage = status => {
+      if (status) confirm.removeAttribute('disabled')
+      else confirm.disabled = true
+    }
+
+    // Check domain on keyup (writing and paste)
+    const onkeyup = ({ target }) => {
+      if (!isDomain(target.value)) setConfirmUsage(false) // disable confirm button
+      else (domain = target.value.replace(/\/$/, '')) && setConfirmUsage(true) // trim any last slash and enable confirm button
+    }
     // Input custom domain
-    const input = document.createElement('input')
-    input.type = 'text'
-    input.placeholder = 'https://domain.org'
-    input.classList.add('form-control')
+    const input = html`<input type="text" placeholder="https://domain.org" class="form-control" onkeyup="${onkeyup}" />`
 
     // Instructions container
-    const paragraph = document.createElement('p')
-    paragraph.innerText = instructionsText
+    const text = await translate('Enter the instance’s address')
+    const paragraph = html`<p>${text}</p>`
 
-    button.addEventListener('click', () => {
-      const observer = addModalOpenObserver(modalElement => {
-        // Customize modal
-        const modalDialogElement = modalElement.querySelector('.modal-dialog')
-        modalDialogElement.classList.remove('modal-lg')
-        modalDialogElement.classList.add('custom-domain')
+    // Disable confirm button on show
+    confirm.disabled = true
 
-        // Inject all elements to modal body
-        const modalBodyElement = modalElement.querySelector('.modal-body')
-        modalBodyElement.appendChild(icon)
-        modalBodyElement.appendChild(paragraph)
-        modalBodyElement.appendChild(input)
+    // Inject all elements to modal body
+    render(modal.querySelector('.modal-body'), html`${icon}${paragraph}${input}`)
+  })
 
-        // Disable modal share button
-        const shareButtonElement = modalDialogElement.querySelector('.modal-footer input:last-child')
-        shareButtonElement.disabled = true
-
-        // Domain checker
-        const domainChecker = () => {
-          if (/^https?:\/\/[a-z\d]+\.[a-z]{2,}(\.[a-z]{2,})?\/?$/.test(input.value)) {
-            shareButtonElement.removeAttribute('disabled')
-          } else {
-            shareButtonElement.disabled = true
-          }
-        }
-
-        // Run if input already filled
-        domainChecker()
-
-        // Run on keyup (writing and paste)
-        input.addEventListener('keyup', domainChecker)
-      }, true)
-
-      showModal({
-        title: button.title,
-        content: '',
-        close: false,
-        cancel: { value: cancelLabel, action: () => { observer.disconnect() } },
-        confirm: {
-          value: shareLabel,
-          action: () => {
-            observer.disconnect()
-            const domain = input.value.replace(/\/$/, '') // trim any last slash
-            window.open(`${domain}/${href}`)
-          }
-        }
-      })
-    })
-
-    // Re-build buttonLink for each alteration of the source link to share with a filter
-    inputFilterElements.forEach(inputFilter => {
-      inputFilter.addEventListener('change', () => { href = buildButtonLink(inputLinkElement.value) })
-    })
-  } else {
-    button.href = buildButtonLink(inputLinkElement.href)
-
-    // Re-build buttonLink for each alteration of the source link to share with a filter
-    inputFilterElements.forEach(inputFilter => {
-      inputFilter.addEventListener('change', () => { button.href = buildButtonLink(inputLinkElement.value) })
-    })
-  }
-
-  return button
+  showModal({
+    title,
+    cancel: {
+      value: await translate('Cancel'),
+      action: () => { observer.disconnect() }
+    },
+    confirm: {
+      value: await translate('Share'),
+      action: () => {
+        window.open(`${domain}/${link}`)
+        observer.disconnect()
+      }
+    }
+  })
 }
 
 async function displayButtons (tabContent) {
@@ -195,10 +177,8 @@ async function displayButtons (tabContent) {
   const filtersContainer = tabContent.nextElementSibling
   const inputFilterElements = filtersContainer.querySelectorAll('my-peertube-checkbox input, my-timestamp-input input')
 
-  // Buttons container
-  const container = document.createElement('div')
-
   // Insert buttons to container
+  const buttons = []
   for (const service of services) {
     const button = await buildButton({
       ...service,
@@ -207,10 +187,11 @@ async function displayButtons (tabContent) {
       inputLinkElement
     })
 
-    container.appendChild(button)
+    buttons.push(button)
   }
 
-  container.classList.add('video-sharing-container')
+  // Buttons container
+  const container = html.node`<div class="video-sharing-container">${buttons}</div>`
 
   // Insert buttons container
   inputLinkElement.parentElement.insertBefore(container, inputLinkElement)

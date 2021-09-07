@@ -41,7 +41,9 @@
     "gd": "./languages/gd.json",
     "sv-SE": "./languages/sv.json"
   },
-  "dependencies": {},
+  "dependencies": {
+    "uhtml": "^2.7.6"
+  },
   "husky": {
     "hooks": {
       "pre-commit": "lint-staged"

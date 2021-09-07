@@ -1,9 +1,9 @@
-ngb-modal-window .playlist {
+.modal .playlist {
   display: flex;
   flex-direction: column;
 }
 
-ngb-modal-window .video-sharing-container {
+.modal .video-sharing-container {
   margin-bottom: 25px;
   display: flex;
   justify-content: center;
@@ -11,7 +11,7 @@ ngb-modal-window .video-sharing-container {
   width: 100%;
 }
 
-ngb-modal-window .video-sharing {
+.modal .video-sharing {
   cursor: pointer;
   display: inline-flex;
   text-decoration: none !important;
@@ -25,7 +25,7 @@ ngb-modal-window .video-sharing {
   margin-right: 13px;
 }
 
-ngb-modal-window .video-sharing img {
+.modal .video-sharing img {
   width: 60px;
   height: 60px;
   margin-bottom: 5px;
@@ -35,24 +35,24 @@ ngb-modal-window .video-sharing img {
   z-index: 16000 !important;
 }
 
-ngb-modal-window .custom-domain .modal-header {
+.modal.custom-domain .modal-header {
   display: flex;
   justify-content: center;
   width: 100%;
 }
 
-ngb-modal-window .custom-domain .modal-body {
+.modal.custom-domain .modal-body {
   display: flex;
   align-items: center;
   width: 100%;
   flex-direction: column;
 }
 
-ngb-modal-window .custom-domain .modal-body p {
+.modal.custom-domain .modal-body p {
   align-self: flex-start;
 }
 
-ngb-modal-window .custom-domain .modal-body img {
+.modal.custom-domain .modal-body img {
   width: 140px;
   margin-bottom: 45px;
 }
