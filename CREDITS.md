@@ -8,3 +8,7 @@
 - linkedin
 - wordpress
 - tumblr
+
+## Flatart icons
+
+- diaspora
