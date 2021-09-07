@@ -15,6 +15,11 @@
     "customDomain": true
   },
   {
+    "label": "Friendica",
+    "sharerLink": "bookmarklet?url=%link&title=%body",
+    "customDomain": true
+  },
+  {
     "label": "Facebook",
     "sharerLink": "https://facebook.com/sharer/sharer.php?display=page&u=%link"
   },

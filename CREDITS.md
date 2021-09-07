@@ -12,3 +12,7 @@
 ## Flatart icons
 
 - diaspora
+
+## Others icons
+
+- friendica (Kristian Salonen)
