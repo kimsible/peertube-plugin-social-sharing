@@ -1,5 +1,20 @@
 # Changelog
 
+## [0.10.0] - 2021-09-07
+
+### Added
+
+- diaspora*, Friendica and Plesmora
+
+### Fixed
+
+- Broken link update to share on filter timestamp & checkboxes
+
+### Chores
+
+- Migration from Webpack 5 to Vite
+- Optimization of MutationObserver and querySelector usage
+
 ## [0.9.1] - 2021-09-02
 
 ### Added
