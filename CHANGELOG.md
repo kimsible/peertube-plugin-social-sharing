@@ -1,5 +1,15 @@
 # Changelog
 
+## [0.10.1] - 2021-09-08
+
+### Fixed
+
+- Weird effect on first modal show caused by the delay of DOM querySelector and node injection running after angular rendering
+
+### Chores
+
+- Use [uhtml](https://github.com/WebReflection/uhtml) to handle DOM and have a much less verbose code
+
 ## [0.10.0] - 2021-09-07
 
 ### Added
