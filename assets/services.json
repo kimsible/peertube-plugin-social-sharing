@@ -33,6 +33,11 @@
     "sharerLink": "https://twitter.com/intent/tweet?text=%body&url=%link"
   },
   {
+    "label": "lemmy",
+    "sharerLink": "create_post?title=%body&url=%link&body=%body",
+    "customDomain": true
+  },
+  {
     "label": "reddit",
     "sharerLink": "https://reddit.com/submit?url=%link&title=%body"
   },
